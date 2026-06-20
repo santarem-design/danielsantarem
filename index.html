@@ -140,7 +140,7 @@
           <div class="col-lg-3 col-md-6 d-flex flex-column align-items-center">
             <i class="bi bi-share"></i>
             <div class="stats-item">
-              <span data-purecounter-start="0" data-purecounter-end="23" data-purecounter-duration="1" class="purecounter"></span>
+              <span data-purecounter-start="0" data-purecounter-end="24" data-purecounter-duration="1" class="purecounter"></span>
               <p>Citations</p>
             </div>
           </div><!-- End Stats Item -->
@@ -329,16 +329,7 @@
   <script src="assets/vendor/imagesloaded/imagesloaded.pkgd.min.js"></script>
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-  <script>
-  fetch('/scopus-stats.json') // ajusta o caminho se o ficheiro não estiver na raiz
-    .then(response => response.json())
-    .then(data => {
-      document.getElementById('scopus-citations').textContent = data.citations;
-      document.getElementById('scopus-documents').textContent = data.documents;
-      document.getElementById('scopus-hindex').textContent = data.h_index ?? '—';
-    })
-    .catch(err => console.error('Erro ao carregar estatísticas do Scopus:', err));
-</script>
+
 
   <!-- Main JS File -->
   <script src="assets/js/main.js"></script>
