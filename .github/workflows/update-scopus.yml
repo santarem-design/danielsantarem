@@ -21,15 +21,31 @@ jobs:
           SCOPUS_API_KEY: ${{ secrets.SCOPUS_API_KEY }}
           SCOPUS_AUTHOR_ID: '58106562500'
         run: |
-          curl -s "https://api.elsevier.com/content/author?author_id=${SCOPUS_AUTHOR_ID}&apiKey=${SCOPUS_API_KEY}&httpAccept=application/json" \
+          curl -s -w "\nHTTP_STATUS:%{http_code}\n" "https://api.elsevier.com/content/author?author_id=${SCOPUS_AUTHOR_ID}&apiKey=${SCOPUS_API_KEY}&httpAccept=application/json" \
             -o raw-response.json
+
+          echo "----- Resposta da API (primeiros 2000 caracteres) -----"
+          head -c 2000 raw-response.json
+          echo ""
+          echo "---------------------------------------------------------"
 
           python3 - <<'EOF'
           import json
+          import sys
           from datetime import datetime, timezone
 
           with open("raw-response.json") as f:
-              data = json.load(f)
+              raw = f.read()
+
+          try:
+              data = json.loads(raw)
+          except json.JSONDecodeError as e:
+              print(f"ERRO: a resposta não é JSON válido: {e}", file=sys.stderr)
+              sys.exit(1)
+
+          if "author-retrieval-response" not in data:
+              print(f"ERRO: resposta inesperada da API: {json.dumps(data)[:1000]}", file=sys.stderr)
+              sys.exit(1)
 
           core = data["author-retrieval-response"][0]["coredata"]
 
