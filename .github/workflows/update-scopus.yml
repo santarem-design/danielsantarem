@@ -21,7 +21,16 @@ jobs:
           SCOPUS_API_KEY: ${{ secrets.SCOPUS_API_KEY }}
           SCOPUS_AUTHOR_ID: '58106562500'
         run: |
-          curl -s -w "\nHTTP_STATUS:%{http_code}\n" "https://api.elsevier.com/content/author?author_id=${SCOPUS_AUTHOR_ID}&apiKey=${SCOPUS_API_KEY}&httpAccept=application/json" \
+          # Limpa espaços, quebras de linha ou caracteres invisíveis da chave
+          CLEAN_KEY=$(echo -n "$SCOPUS_API_KEY" | tr -d '[:space:]')
+
+          echo "Tamanho da chave (deve ser ~32 caracteres, sem espaços): ${#CLEAN_KEY}"
+
+          curl -sS -G "https://api.elsevier.com/content/author" \
+            --data-urlencode "author_id=${SCOPUS_AUTHOR_ID}" \
+            --data-urlencode "apiKey=${CLEAN_KEY}" \
+            --data-urlencode "httpAccept=application/json" \
+            -w "\nHTTP_STATUS:%{http_code}\n" \
             -o raw-response.json
 
           echo "----- Resposta da API (primeiros 2000 caracteres) -----"
